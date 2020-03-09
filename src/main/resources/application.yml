@@ -5,9 +5,9 @@ server:
   ssl.key-store-password: 'zdC3MZNQ4CPBB89mZZ5dwUs6PUJN72R9'
   ssl.key-alias: 'stempol'
 security.require-ssl: true
-spring.datasource.url: 'jdbc:postgresql://localhost:5432/stempol_notes'
+spring.datasource.url: 'jdbc:postgresql://postgres:5432/stempol_notes'
 spring.datasource.username: 'postgres'
-spring.datasource.password: 'postgres'
+spring.datasource.password: 'myMhrtc27WqdUZYTZHgwTfr9f3hWHPaReTQR5XrAwJCFTAzB5G8fdKskbeVfCP6JWwXqN3SUWTFaAGHRhM67SZxuDRM8LYEdvxeJtzujgtNqdksBnCWFfpGu3uBJWDyR'
 
 # The SQL dialect makes Hibernate generate better SQL for the chosen database
 spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect

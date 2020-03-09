@@ -1,5 +1,8 @@
 package nl.politie.predev.notes.api.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,12 +16,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import nl.politie.predev.notes.api.model.Note;
 import nl.politie.predev.notes.api.model.NoteIdentifier;
+import nl.politie.predev.notes.api.model.SharedNote;
 import nl.politie.predev.notes.api.repository.MultimediaRepository;
 import nl.politie.predev.notes.api.repository.NoteTranscriptRepository;
 import nl.politie.predev.notes.api.repository.NotesRepository;
 import nl.politie.predev.notes.api.repository.SharedNotesRepository;
+
 
 @RestController
 public class NotesController {
@@ -35,6 +42,8 @@ public class NotesController {
 	@Autowired
 	private SharedNotesRepository sharedNotesRepository;
 
+	private String jwtSecret="JWTSuperSecretKey";
+	
 	@PostMapping("/addnote")
 	public ResponseEntity<?> addNote(@Valid @RequestBody Note note, HttpServletRequest req) {
 		return updateNote(note, req);
@@ -93,9 +102,66 @@ public class NotesController {
 		notesRepository.deleteById(id.getNoteID());
 		return ResponseEntity.ok("{\"acknowledged\": true}");
 	}
+	
+	private List<Note> getFilteredNotes(List<Note> notes, HttpServletRequest req) {
+		
+		List<Note> retval = new ArrayList<Note>();
 
-	private boolean validateRequest(UUID noteID, HttpServletRequest req){
-		return false;
+		for(Note note : notes) {
+			Note filteredNote = getFilteredNote(note, req);
+			if(filteredNote !=null) {
+				retval.add(filteredNote);
+			}
+		}
+		
+		
+		return retval;
+	}
+
+	private Note getFilteredNote(Note note, HttpServletRequest req) {
+		
+		//TODO
+		//TODO
+		//TODO 
+		//RBAC filters
+		
+		//User en dr groups waar hij in zit ophalen
+		String username = getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
+		List<String> groups =  getGroupsFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
+		
+		//Als ik de owner ben mag ik hem zien
+		if(note.getOwner().equalsIgnoreCase(username)) {
+			return note;
+		}else{
+			for(SharedNote sharedNote: note.getShareDetails()){
+				//Als de note met mij of met de groep waar ik in zit gedeeld wordt, dan mag ik hem zien
+				if(sharedNote.getSharedWithUsername().equalsIgnoreCase(username)|| groups.contains(sharedNote.getSharedWithGroupname())) {
+					return note;
+				}
+			}
+		}
+		return null;
 	}
 	
+	
+	public String getUsernameFromJWT(String token) {
+
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
+        
+    }
+	
+	public List<String> getGroupsFromJWT(String token) {
+
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+        String rollen = (String) claims.get("rol");
+        return Arrays.asList(rollen.split(";"));
+        
+    }
 }

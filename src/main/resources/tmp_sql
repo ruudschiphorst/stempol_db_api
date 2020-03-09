@@ -10,28 +10,26 @@ CREATE TABLE roles (id SERIAL PRIMARY KEY, rolename varchar(50), may_create bool
 ALTER TABLE shared_notes ADD COLUMN roleid integer REFERENCES roles(id);
 CREATE TABLE roles (id SERIAL PRIMARY KEY, rolename varchar(50), may_create boolean DEFAULT false, may_read boolean DEFAULT true, may_update boolean DEFAULT false, may_delete boolean DEFAULT false);
 ALTER TABLE shared_notes ADD COLUMN roleid integer REFERENCES roles(id);
+INSERT INTO roles (rolename, may_create, may_read, may_update, may_delete) VALUES ('admin', true, true, true, true);
+INSERT INTO roles (rolename, may_create, may_read, may_update, may_delete) VALUES ('reader', false, true, false, false);
+INSERT INTO roles (rolename, may_create, may_read, may_update, may_delete) VALUES ('writer', true, true, true, false);
 
-
-
-
-stempol_notes=# INSERT INTO roles (rolename, may_create, may_read, may_update, may_delete) VALUES ('admin', true, true, true, true);
-stempol_notes=# INSERT INTO roles (rolename, may_create, may_read, may_update, may_delete) VALUES ('reader', false, true, false, false);
-stempol_notes=# INSERT INTO roles (rolename, may_create, may_read, may_update, may_delete) VALUES ('writer', true, true, true, false);
-stempol_notes=# INSERT INTO notes (noteid, title, version, owner) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 'titel 1', 1, 'ruud');
-stempol_notes=# INSERT INTO notes (noteid, title, version, owner) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 'titel 1', 2, 'ruud');
-stempol_notes=# INSERT INTO notes (noteid, title, version, owner) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 'titel 1', 3, 'ruud');
-stempol_notes=# INSERT INTO multimedia (title, filepath, filetype, noteid, noteversion) VALUES ('foto 1', '/var/log/x','jpg', 'b7a1d153-54c0-4c26-9921-6342dbd1cd61',1);
-stempol_notes=# INSERT INTO multimedia (title, filepath, filetype, noteid, noteversion) VALUES ('foto 1', '/var/log/x','jpg', 'b7a1d153-54c0-4c26-9921-6342dbd1cd61',2);
-stempol_notes=# INSERT INTO note_transcripts (noteID, noteVersion, transcriptID, transcript_text) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 1, 'id_van_laurens', 'een hele lange text');
-stempol_notes=# INSERT INTO note_transcripts (noteID, noteVersion, transcriptID, transcript_text) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 2, 'id_van_laurens', 'een hele lange text');
-stempol_notes=# INSERT INTO shared_notes (noteID, noteVersion, shared_with_username, shared_with_groupname) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 1, 'isc20760','');
-stempol_notes=# INSERT INTO shared_notes (noteID, noteVersion, shared_with_username, shared_with_groupname) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 1, 'isc12345','');
-stempol_notes=# INSERT INTO shared_notes (noteID, noteVersion, shared_with_username, shared_with_groupname) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 1, '','PDC_APP_G_MWDP');
-stempol_notes=# INSERT INTO shared_notes (noteID, noteVersion, shared_with_username, shared_with_groupname) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 2, '','BASISTEAM_DEN_HAAG');
-stempol_notes=# UPDATE shared_notes SET roleid = 1 WHERE id=1;
-stempol_notes=# UPDATE shared_notes SET roleid = 2 WHERE id=2;
-stempol_notes=# UPDATE shared_notes SET roleid = 3 WHERE id=3;
-stempol_notes=# UPDATE shared_notes SET roleid = 3 WHERE id=4;
+# Optional testdata
+INSERT INTO notes (noteid, title, version, owner) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 'titel 1', 1, 'ruud');
+INSERT INTO notes (noteid, title, version, owner) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 'titel 1', 2, 'ruud');
+INSERT INTO notes (noteid, title, version, owner) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 'titel 1', 3, 'ruud');
+INSERT INTO multimedia (title, filepath, filetype, noteid, noteversion) VALUES ('foto 1', '/var/log/x','jpg', 'b7a1d153-54c0-4c26-9921-6342dbd1cd61',1);
+INSERT INTO multimedia (title, filepath, filetype, noteid, noteversion) VALUES ('foto 1', '/var/log/x','jpg', 'b7a1d153-54c0-4c26-9921-6342dbd1cd61',2);
+INSERT INTO note_transcripts (noteID, noteVersion, transcriptID, transcript_text) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 1, 'id_van_laurens', 'een hele lange text');
+INSERT INTO note_transcripts (noteID, noteVersion, transcriptID, transcript_text) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 2, 'id_van_laurens', 'een hele lange text');
+INSERT INTO shared_notes (noteID, noteVersion, shared_with_username, shared_with_groupname) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 1, 'isc20760','');
+INSERT INTO shared_notes (noteID, noteVersion, shared_with_username, shared_with_groupname) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 1, 'isc12345','');
+INSERT INTO shared_notes (noteID, noteVersion, shared_with_username, shared_with_groupname) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 1, '','PDC_APP_G_MWDP');
+INSERT INTO shared_notes (noteID, noteVersion, shared_with_username, shared_with_groupname) VALUES ('b7a1d153-54c0-4c26-9921-6342dbd1cd61', 2, '','BASISTEAM_DEN_HAAG');
+UPDATE shared_notes SET roleid = 1 WHERE id=1;
+UPDATE shared_notes SET roleid = 2 WHERE id=2;
+UPDATE shared_notes SET roleid = 3 WHERE id=3;
+UPDATE shared_notes SET roleid = 3 WHERE id=4;
 
 
 {"title":"een titel","note_text":null,"version":1,"owner":"Ruud","created_by":"ruud","generated_at":null,"is_public":true,"is_deleted":false}
