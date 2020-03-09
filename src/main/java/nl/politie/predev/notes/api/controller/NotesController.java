@@ -44,6 +44,11 @@ public class NotesController {
 
 	private String jwtSecret="JWTSuperSecretKey";
 	
+	@GetMapping
+	public ResponseEntity<?> getAll(){
+		return ResponseEntity.ok(notesRepository.findAll());
+	}
+	
 	@PostMapping("/addnote")
 	public ResponseEntity<?> addNote(@Valid @RequestBody Note note, HttpServletRequest req) {
 		return updateNote(note, req);
