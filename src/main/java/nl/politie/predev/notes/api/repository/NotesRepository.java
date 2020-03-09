@@ -14,7 +14,7 @@ import nl.politie.predev.notes.api.model.Note;
 
 
 @Repository
-public interface NotesRepository extends JpaRepository<Note, Long> {
+public interface NotesRepository extends RefreshableRepository<Note, Long> {
 
 	@Query("SELECT n FROM Note n WHERE noteID = ?1 AND version = ?2 AND is_deleted = false")
 	Note findNoteByIdAndVersion(UUID noteID, Integer version);
@@ -37,4 +37,7 @@ public interface NotesRepository extends JpaRepository<Note, Long> {
 	@Modifying
 	@Query("UPDATE Note n SET is_deleted = true WHERE noteID = ?1 AND version = ?2")
 	void deleteByIdAndVersion(UUID noteID, Integer version);
+	
+
+	
 }
