@@ -30,7 +30,8 @@ public class Note implements java.io.Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(updatable = false, insertable = false, nullable = false)
 	private UUID noteID;
-	@Column(updatable = false, insertable = false, nullable = false)
+	
+	@Column(updatable = false, insertable = true, nullable = false)
 	private Integer version;
 	
 	@Column
