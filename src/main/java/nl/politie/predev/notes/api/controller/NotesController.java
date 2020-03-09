@@ -66,7 +66,8 @@ public class NotesController {
 				versionNumber = mostRecentNoteInDatabase.getVersion() + 1;
 			}
 			note.setVersion(versionNumber);
-			Note n = notesRepository.saveAndFlush(note);
+			Note n = notesRepository.save(note);
+			notesRepository.flush();
 			return ResponseEntity.ok(notesRepository.findById(n.getId()));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
