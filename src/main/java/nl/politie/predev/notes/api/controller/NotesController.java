@@ -44,7 +44,7 @@ public class NotesController {
 
 	private String jwtSecret="JWTSuperSecretKey";
 	
-	@GetMapping
+	@GetMapping("/getall")
 	public ResponseEntity<?> getAll(){
 		return ResponseEntity.ok(notesRepository.findAll());
 	}
