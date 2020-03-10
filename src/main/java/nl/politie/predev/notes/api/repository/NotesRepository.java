@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import javax.transaction.Transactional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -38,6 +37,9 @@ public interface NotesRepository extends RefreshableRepository<Note, Long> {
 	@Query("UPDATE Note n SET is_deleted = true WHERE noteID = ?1 AND version = ?2")
 	void deleteByIdAndVersion(UUID noteID, Integer version);
 	
+	
+	@Query("SELECT n FROM Note n JOIN SharedNote s on n.noteID=s.noteID WHERE (s.sharedWithUsername= ?1 OR s.sharedWithGroupname IN (?2)) AND n.is_deleted = false AND s.is_deleted = false")
+	void getAll(String username, String roles);
 
 	
 }
