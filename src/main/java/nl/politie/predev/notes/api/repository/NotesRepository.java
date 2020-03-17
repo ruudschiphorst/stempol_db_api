@@ -38,7 +38,7 @@ public interface NotesRepository extends RefreshableRepository<Note, Long> {
 	void deleteByIdAndVersion(UUID noteID, Integer version);
 	
 	
-	@Query("SELECT n FROM Note n JOIN SharedNote s on n.noteID=s.noteID WHERE (n.owner =?1 OR s.sharedWithUsername= ?1 OR s.sharedWithGroupname IN (?2)) AND n.is_deleted = false AND s.isDeleted = false")
+	@Query("SELECT n FROM Note n LEFT JOIN SharedNote s on n.noteID=s.noteID WHERE (n.owner =?1 OR s.sharedWithUsername= ?1 OR s.sharedWithGroupname IN (?2)) AND n.is_deleted = false AND s.isDeleted = false")
 	List<Note> getAll(String username, String roles);
 
 	
