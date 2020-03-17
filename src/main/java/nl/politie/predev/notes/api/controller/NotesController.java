@@ -73,12 +73,12 @@ public class NotesController {
 		}
 	}
 
-	@GetMapping("/getnotebyidandversion")
+	@PostMapping("/getnotebyidandversion")
 	public ResponseEntity<?> getNoteByIdAndVersion(@Valid @RequestBody NoteIdentifier id, HttpServletRequest req) {
 		return ResponseEntity.ok(notesRepository.findNoteByIdAndVersion(id.getNoteID(), id.getVersion()));
 	}
 
-	@GetMapping("/getnote")
+	@PostMapping("/getnote")
 	public ResponseEntity<?> getMostRecentNoteByID(@RequestBody NoteIdentifier id, HttpServletRequest req) {
 		try {
 			Note note = notesRepository.findMostRecentNoteByID(id.getNoteID());
@@ -92,7 +92,7 @@ public class NotesController {
 		}
 	}
 
-	@GetMapping("/getallnotesbyid")
+	@PostMapping("/getallnotesbyid")
 	public ResponseEntity<?> getAllNotesByID(@RequestBody NoteIdentifier id, HttpServletRequest req) {
 		return ResponseEntity.ok(notesRepository.findAllNoteVersionsByID(id.getNoteID()));
 	}
