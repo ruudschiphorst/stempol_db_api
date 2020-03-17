@@ -45,7 +45,7 @@ public class NotesController {
 	
 	@GetMapping("/getall")
 	public ResponseEntity<?> getAll(){
-		return ResponseEntity.ok(notesRepository.getAll("ruud", "mwdp"));
+		return ResponseEntity.ok(notesRepository.getAll("Ruud", "mwdp"));
 	}
 	
 	@PostMapping("/addnote")
