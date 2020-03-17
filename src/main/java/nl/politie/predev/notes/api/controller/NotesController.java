@@ -50,18 +50,16 @@ public class NotesController {
 		List<Note> notes = notesRepository.getAll("Ruud", "mwdp");
 		Map<String, Note> filteredNotes = new HashMap<String, Note>();
 		
+		//Alleen meest recente versies
 		for(Note note: notes) {
 			Note existing = filteredNotes.get(note.getNoteID().toString());
-			if(existing == null) {
+			if(existing == null || note.getVersion() > existing.getVersion()) {
 				filteredNotes.put(note.getNoteID().toString(), note);
-			} else {
-				if(note.getVersion() > existing.getVersion()) {
-					filteredNotes.put(note.getNoteID().toString(), note);
-				}
-			}
+			} 
 		}
 		
 		notes =  new ArrayList<Note>();
+		
 		for(Map.Entry<String, Note> entry: filteredNotes.entrySet()) {
 			notes.add(entry.getValue());
 		}
