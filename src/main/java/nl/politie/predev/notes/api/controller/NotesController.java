@@ -2,7 +2,9 @@ package nl.politie.predev.notes.api.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -45,7 +47,26 @@ public class NotesController {
 	
 	@GetMapping("/getall")
 	public ResponseEntity<?> getAll(){
-		return ResponseEntity.ok(notesRepository.getAll("Ruud", "mwdp"));
+		List<Note> notes = notesRepository.getAll("Ruud", "mwdp");
+		Map<String, Note> filteredNotes = new HashMap<String, Note>();
+		
+		for(Note note: notes) {
+			Note existing = filteredNotes.get(note.getNoteID().toString());
+			if(existing == null) {
+				filteredNotes.put(note.getNoteID().toString(), note);
+			} else {
+				if(note.getVersion() > existing.getVersion()) {
+					filteredNotes.put(note.getNoteID().toString(), note);
+				}
+			}
+		}
+		
+		notes =  new ArrayList<Note>();
+		for(Map.Entry<String, Note> entry: filteredNotes.entrySet()) {
+			notes.add(entry.getValue());
+		}
+		
+		return ResponseEntity.ok(notes);
 	}
 	
 	@PostMapping("/addnote")
