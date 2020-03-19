@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -94,6 +95,9 @@ public class NotesController {
 			if(note.getOwner() == null || note.getOwner().equals(null)) {
 				note.setOwner(getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", "")));
 			}
+			if(note.getNoteID() == null || note.getNoteID().equals(null)) {
+				note.setNoteID(UUID.randomUUID());
+			}
 			
 			Note n = notesRepository.save(note);
 			notesRepository.refresh(n);
@@ -112,7 +116,6 @@ public class NotesController {
 	public ResponseEntity<?> getMostRecentNoteByID(@RequestBody NoteIdentifier id, HttpServletRequest req) {
 		try {
 			Note note = notesRepository.findMostRecentNoteByID(id.getNoteID());
-
 			note.setMultimedia(multimediaRepository.findByNoteID(id.getNoteID()));
 			note.setTranscripts(noteTranscriptRepository.findByNoteID(id.getNoteID()));
 			note.setShareDetails(sharedNotesRepository.findByNoteID(id.getNoteID()));
