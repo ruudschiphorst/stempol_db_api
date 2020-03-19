@@ -84,6 +84,12 @@ public class NotesController {
 				versionNumber = mostRecentNoteInDatabase.getVersion() + 1;
 			}
 			note.setVersion(versionNumber);
+			note.setCreated_by(getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", "")));
+			
+			if(note.getOwner() == null || note.getOwner().equals(null)) {
+				note.setOwner(getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", "")));
+			}
+			
 			Note n = notesRepository.save(note);
 			notesRepository.refresh(n);
 			return ResponseEntity.ok(notesRepository.findById(n.getId()));
