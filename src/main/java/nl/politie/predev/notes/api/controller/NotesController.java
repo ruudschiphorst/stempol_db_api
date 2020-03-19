@@ -45,6 +45,11 @@ public class NotesController {
 
 	private String jwtSecret="JWTSuperSecretKey";
 	
+	@GetMapping("/get")
+	public ResponseEntity<?> getEverythingTest(){
+		return ResponseEntity.ok(notesRepository.findAll());
+	}
+	
 	@GetMapping("/getall")
 	public ResponseEntity<?> getAll(){
 		List<Note> notes = notesRepository.getAll("Ruud", "mwdp");
