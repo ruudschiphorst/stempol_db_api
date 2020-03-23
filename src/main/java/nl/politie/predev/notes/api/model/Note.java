@@ -20,7 +20,6 @@ public class Note implements java.io.Serializable {
 
 	private static final long serialVersionUID = -2756761901963218687L;
 
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(updatable = false, insertable = false, nullable = false)

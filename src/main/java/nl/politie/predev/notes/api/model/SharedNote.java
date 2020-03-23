@@ -37,7 +37,6 @@ public class SharedNote {
 	@JoinColumn(name="roleID", referencedColumnName = "id", insertable = false, updatable = false)
 	private Role role;
 	
-	
 	@Column(name = "is_deleted")
 	private boolean isDeleted;
 	
