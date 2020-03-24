@@ -1,9 +1,10 @@
 server:
   port: '8086'
   ssl.key-store-type: 'PKCS12'
-  ssl.key-store: '/etc/stempol/certs/stempol-keystore.jks'
+  ssl.key-store: '/etc/stempol/certs/keystore.p12'
   ssl.key-store-password: 'zdC3MZNQ4CPBB89mZZ5dwUs6PUJN72R9'
-  ssl.key-alias: 'stempol'
+  ssl.key-alias: 'tomcat'
+  ssl.keyStoreType: PKCS12
 security.require-ssl: true
 spring.datasource.url: 'jdbc:postgresql://postgres:5432/stempol_notes'
 spring.datasource.username: 'postgres'
