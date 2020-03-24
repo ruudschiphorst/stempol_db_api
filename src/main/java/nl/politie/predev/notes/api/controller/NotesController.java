@@ -76,13 +76,13 @@ public class NotesController {
 			} 
 		}
 		
-//		notes =  new ArrayList<Note>();
-//		
-//		for(Map.Entry<String, Note> entry: filteredNotes.entrySet()) {
-//			Note note  = entry.getValue();
+		notes =  new ArrayList<Note>();
+		
+		for(Map.Entry<String, Note> entry: filteredNotes.entrySet()) {
+			Note note  = entry.getValue();
 //			note.setMultimedia(multimediaRepository.findByNoteID(note.getNoteID()));
-//			notes.add(entry.getValue());
-//		}
+			notes.add(entry.getValue());
+		}
 		
 		return ResponseEntity.ok(filteredNotes);
 	}
