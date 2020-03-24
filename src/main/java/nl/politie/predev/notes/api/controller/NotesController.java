@@ -171,18 +171,25 @@ public class NotesController {
 			}
 			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
 			for(Multimedia multimedia : fetchedMultimedia) {
-				
+				System.err.println(1);
 				File imgPath = new File(multimedia.getFilepath());
+				System.err.println(2);
 				Image image = ImageIO.read(imgPath).getScaledInstance(100, 100, BufferedImage.SCALE_SMOOTH);
+				System.err.println(3);
 				BufferedImage bufferedImage = toBufferedImage(image);
+				System.err.println(4);
 				DataBufferByte data   = (DataBufferByte) bufferedImage.getRaster().getDataBuffer();
+				System.err.println(5);
 				multimedia.setContent(Base64.getEncoder().encodeToString(data.getData()));
+				System.err.println(6);
 				transformedMultimedia.add(multimedia);
 			}
 			
-			
+			System.err.println(7);
 			Note note = notesRepository.findMostRecentNoteByID(id.getNoteID());
+			System.err.println(8);
 			note.setMultimedia(transformedMultimedia);
+			System.err.println(9);
 			note.setTranscripts(noteTranscriptRepository.findByNoteID(id.getNoteID()));
 			note.setShareDetails(sharedNotesRepository.findByNoteID(id.getNoteID()));
 			return ResponseEntity.ok(note);
