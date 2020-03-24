@@ -134,6 +134,9 @@ public class NotesController {
 		multimedia.setFiletype("jpg");
 		multimedia.setNoteVersion(note.getVersion());
 		multimedia.setTitle("Nieuwe titel als placeholder");
+		if(multimedia.getMultimediaID() == null || multimedia.getMultimediaID().equals(null)) {
+			multimedia.setMultimediaID(UUID.randomUUID());
+		}
 		
 		try {
 			byte[] decodedContent = Base64.getDecoder().decode(multimedia.getContent());
