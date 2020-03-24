@@ -165,23 +165,23 @@ public class NotesController {
 	public ResponseEntity<?> getMostRecentNoteByID(@RequestBody NoteIdentifier id, HttpServletRequest req) {
 		try {
 			List<Multimedia> fetchedMultimedia = multimediaRepository.findByNoteID(id.getNoteID());
-			List<Multimedia> transformedMultimedia = new ArrayList<Multimedia>();
+//			List<Multimedia> transformedMultimedia = new ArrayList<Multimedia>();
 			
-			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
-			for(Multimedia multimedia : fetchedMultimedia) {
-				
-				File imgPath = new File(multimedia.getFilepath());
-				BufferedImage bufferedImage = (BufferedImage) ImageIO.read(imgPath).getScaledInstance(10, 10, BufferedImage.SCALE_SMOOTH);
-				DataBufferByte data   = (DataBufferByte) bufferedImage.getRaster().getDataBuffer();
-				multimedia.setContent(Base64.getEncoder().encodeToString(data.getData()));
-				transformedMultimedia.add(multimedia);
-			}
-			
-			ObjectMapper om = new ObjectMapper();
-			System.err.println(om.writeValueAsString(transformedMultimedia));
+//			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
+//			for(Multimedia multimedia : fetchedMultimedia) {
+//				
+//				File imgPath = new File(multimedia.getFilepath());
+//				BufferedImage bufferedImage = (BufferedImage) ImageIO.read(imgPath).getScaledInstance(10, 10, BufferedImage.SCALE_SMOOTH);
+//				DataBufferByte data   = (DataBufferByte) bufferedImage.getRaster().getDataBuffer();
+//				multimedia.setContent(Base64.getEncoder().encodeToString(data.getData()));
+//				transformedMultimedia.add(multimedia);
+//			}
+//			
+//			ObjectMapper om = new ObjectMapper();
+//			System.err.println(om.writeValueAsString(transformedMultimedia));
 			
 			Note note = notesRepository.findMostRecentNoteByID(id.getNoteID());
-			note.setMultimedia(transformedMultimedia);
+			note.setMultimedia(fetchedMultimedia);
 			note.setTranscripts(noteTranscriptRepository.findByNoteID(id.getNoteID()));
 			note.setShareDetails(sharedNotesRepository.findByNoteID(id.getNoteID()));
 			System.err.println(om.writeValueAsString(note));
