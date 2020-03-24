@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -178,9 +179,11 @@ public class NotesController {
 				System.err.println(3);
 				BufferedImage bufferedImage = toBufferedImage(image);
 				System.err.println(4);
-				DataBufferByte data   = (DataBufferByte) bufferedImage.getRaster().getDataBuffer();
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			    ImageIO.write(bufferedImage, "jpg", bos );
+			    byte [] data = bos.toByteArray();
 				System.err.println(5);
-				multimedia.setContent(Base64.getEncoder().encodeToString(data.getData()));
+				multimedia.setContent(Base64.getEncoder().encodeToString(data));
 				System.err.println(6);
 				transformedMultimedia.add(multimedia);
 			}
