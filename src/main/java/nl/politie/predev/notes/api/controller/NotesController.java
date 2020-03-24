@@ -140,6 +140,7 @@ public class NotesController {
 		multimedia.setFiletype("jpg");
 		multimedia.setNoteVersion(note.getVersion());
 		multimedia.setTitle("Nieuwe titel als placeholder");
+		multimedia.setFilepath(path);
 		if(multimedia.getMultimediaID() == null || multimedia.getMultimediaID().equals(null)) {
 			multimedia.setMultimediaID(UUID.randomUUID());
 		}
