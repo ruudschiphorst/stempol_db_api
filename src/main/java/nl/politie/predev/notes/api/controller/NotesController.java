@@ -170,7 +170,7 @@ public class NotesController {
 			for(Multimedia multimedia : fetchedMultimedia) {
 				
 				File imgPath = new File(multimedia.getFilepath());
-				BufferedImage bufferedImage = (BufferedImage) ImageIO.read(imgPath).getScaledInstance(100, 100, BufferedImage.SCALE_SMOOTH);
+				BufferedImage bufferedImage = (BufferedImage) ImageIO.read(imgPath).getScaledInstance(10, 10, BufferedImage.SCALE_SMOOTH);
 				DataBufferByte data   = (DataBufferByte) bufferedImage.getRaster().getDataBuffer();
 				multimedia.setContent(Base64.getEncoder().encodeToString(data.getData()));
 				transformedMultimedia.add(multimedia);
