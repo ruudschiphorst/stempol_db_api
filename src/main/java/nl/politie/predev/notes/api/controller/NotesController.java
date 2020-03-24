@@ -1,9 +1,5 @@
 package nl.politie.predev.notes.api.controller;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,6 +7,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +24,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.unboundid.util.Base64;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -140,13 +136,11 @@ public class NotesController {
 		multimedia.setTitle("Nieuwe titel als placeholder");
 		
 		try {
-			byte[] decodedContent = Base64.decode(multimedia.getContent());
+			byte[] decodedContent = Base64.getDecoder().decode(multimedia.getContent());
 			Path filepath = Paths.get(path);
+			Files.createFile(filepath);
             Files.write(filepath, decodedContent);
             multimediaRepository.save(multimedia);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -167,7 +161,7 @@ public class NotesController {
 			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
 			for(Multimedia multimedia : fetchedMultimedia) {
 				byte[] filecontent = Files.readAllBytes(Paths.get(multimedia.getFilepath()));
-				multimedia.setContent(Base64.encode(filecontent));
+				multimedia.setContent(Base64.getEncoder().encodeToString(filecontent));
 				transformedMultimedia.add(multimedia);
 			}
 			
