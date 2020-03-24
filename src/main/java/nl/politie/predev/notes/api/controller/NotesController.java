@@ -163,7 +163,10 @@ public class NotesController {
 		try {
 			List<Multimedia> fetchedMultimedia = multimediaRepository.findByNoteID(id.getNoteID());
 			List<Multimedia> transformedMultimedia = new ArrayList<Multimedia>();
-			
+	
+			for(String p:  new File("/tmp/fotos").list()){
+				System.err.println(p);
+			}
 			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
 			for(Multimedia multimedia : fetchedMultimedia) {
 				
