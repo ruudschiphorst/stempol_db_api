@@ -9,5 +9,7 @@ RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 COPY --from=MAVEN_TOOL_CHAIN /tmp/target/*.jar app.jar
 COPY keystore.p12 /etc/stempol/certs/keystore.p12
+RUN mkdir /tmp/fotos
+RUN chown spring:spring /tmp/fotos
 
 ENTRYPOINT ["java","-jar","/app.jar"]
