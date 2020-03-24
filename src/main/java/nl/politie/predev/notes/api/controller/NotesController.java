@@ -1,5 +1,9 @@
 package nl.politie.predev.notes.api.controller;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -163,8 +168,11 @@ public class NotesController {
 			
 			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
 			for(Multimedia multimedia : fetchedMultimedia) {
-				byte[] filecontent = Files.readAllBytes(Paths.get(multimedia.getFilepath()));
-				multimedia.setContent(Base64.getEncoder().encodeToString(filecontent));
+				
+				File imgPath = new File(multimedia.getFilepath());
+				BufferedImage bufferedImage = (BufferedImage) ImageIO.read(imgPath).getScaledInstance(100, 100, BufferedImage.SCALE_SMOOTH);
+				DataBufferByte data   = (DataBufferByte) bufferedImage.getRaster().getDataBuffer();
+				multimedia.setContent(Base64.getEncoder().encodeToString(data.getData()));
 				transformedMultimedia.add(multimedia);
 			}
 			
