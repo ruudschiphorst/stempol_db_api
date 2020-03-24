@@ -1,5 +1,14 @@
 package nl.politie.predev.notes.api.controller;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,8 +27,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.unboundid.util.Base64;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import nl.politie.predev.notes.api.model.Multimedia;
 import nl.politie.predev.notes.api.model.Note;
 import nl.politie.predev.notes.api.model.NoteIdentifier;
 import nl.politie.predev.notes.api.model.SharedNote;
@@ -66,11 +78,11 @@ public class NotesController {
 		
 		notes =  new ArrayList<Note>();
 		
-		for(Map.Entry<String, Note> entry: filteredNotes.entrySet()) {
-			Note note  = entry.getValue();
-			note.setMultimedia(multimediaRepository.findByNoteID(note.getNoteID()));
-			notes.add(entry.getValue());
-		}
+//		for(Map.Entry<String, Note> entry: filteredNotes.entrySet()) {
+//			Note note  = entry.getValue();
+//			note.setMultimedia(multimediaRepository.findByNoteID(note.getNoteID()));
+//			notes.add(entry.getValue());
+//		}
 		
 		return ResponseEntity.ok(notes);
 	}
@@ -101,14 +113,46 @@ public class NotesController {
 				note.setNoteID(UUID.randomUUID());
 			}
 			
+			
 			Note n = notesRepository.save(note);
 			notesRepository.refresh(n);
+			
+			if(n.getMultimedia() != null) {
+				for(Multimedia multimedia : n.getMultimedia()) {
+					handleMultimediaUpload(multimedia, n);
+				}
+			}
+			
 			return ResponseEntity.ok(notesRepository.findById(n.getId()));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
 		}
 	}
 
+	private void handleMultimediaUpload(Multimedia multimedia, Note note) {
+		
+		String path = "/tmp/fotos/" + UUID.randomUUID().toString() + ".jpg";
+		
+		multimedia.setNoteID(note.getNoteID());
+		multimedia.setDeleted(false);
+		multimedia.setFiletype("jpg");
+		multimedia.setNoteVersion(note.getVersion());
+		multimedia.setTitle("Nieuwe titel als placeholder");
+		
+		try {
+			byte[] decodedContent = Base64.decode(multimedia.getContent());
+			Path filepath = Paths.get(path);
+            Files.write(filepath, decodedContent);
+            multimediaRepository.save(multimedia);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 		
+	}
+	
 	@PostMapping("/getnotebyidandversion")
 	public ResponseEntity<?> getNoteByIdAndVersion(@Valid @RequestBody NoteIdentifier id, HttpServletRequest req) {
 		return ResponseEntity.ok(notesRepository.findNoteByIdAndVersion(id.getNoteID(), id.getVersion()));
@@ -117,8 +161,19 @@ public class NotesController {
 	@PostMapping("/getnote")
 	public ResponseEntity<?> getMostRecentNoteByID(@RequestBody NoteIdentifier id, HttpServletRequest req) {
 		try {
+			List<Multimedia> fetchedMultimedia = multimediaRepository.findByNoteID(id.getNoteID());
+			List<Multimedia> transformedMultimedia = new ArrayList<Multimedia>();
+			
+			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
+			for(Multimedia multimedia : fetchedMultimedia) {
+				byte[] filecontent = Files.readAllBytes(Paths.get(multimedia.getFilepath()));
+				multimedia.setContent(Base64.encode(filecontent));
+				transformedMultimedia.add(multimedia);
+			}
+			
+			
 			Note note = notesRepository.findMostRecentNoteByID(id.getNoteID());
-			note.setMultimedia(multimediaRepository.findByNoteID(id.getNoteID()));
+			note.setMultimedia(transformedMultimedia);
 			note.setTranscripts(noteTranscriptRepository.findByNoteID(id.getNoteID()));
 			note.setShareDetails(sharedNotesRepository.findByNoteID(id.getNoteID()));
 			return ResponseEntity.ok(note);

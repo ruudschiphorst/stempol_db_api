@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "MULTIMEDIA")
@@ -31,11 +32,6 @@ public class Multimedia implements java.io.Serializable {
 	@Column
 	private String filetype;
 	
-//	@ManyToOne
-//	@JoinColumn(name="noteID", referencedColumnName = "noteID", insertable = false, updatable = false)
-//	@JsonIgnore
-//	private Note note;
-	
 	@Column
 	private UUID noteID;
 	@Column(name = "noteversion")
@@ -43,6 +39,9 @@ public class Multimedia implements java.io.Serializable {
 	
 	@Column(name = "is_deleted")
 	private boolean isDeleted;
+	
+	@Transient
+	private String content;
 	
 	public boolean isDeleted(){
 		return isDeleted;
@@ -94,5 +93,13 @@ public class Multimedia implements java.io.Serializable {
 	}
 	public void setFiletype(String filetype) {
 		this.filetype = filetype;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
 	}
 }
