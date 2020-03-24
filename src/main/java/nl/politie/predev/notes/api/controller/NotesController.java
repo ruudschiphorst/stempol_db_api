@@ -1,5 +1,7 @@
 package nl.politie.predev.notes.api.controller;
 
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
@@ -171,7 +173,8 @@ public class NotesController {
 			for(Multimedia multimedia : fetchedMultimedia) {
 				
 				File imgPath = new File(multimedia.getFilepath());
-				BufferedImage bufferedImage = (BufferedImage) ImageIO.read(imgPath).getScaledInstance(100, 100, BufferedImage.SCALE_SMOOTH);
+				Image image = ImageIO.read(imgPath).getScaledInstance(100, 100, BufferedImage.SCALE_SMOOTH);
+				BufferedImage bufferedImage = toBufferedImage(image);
 				DataBufferByte data   = (DataBufferByte) bufferedImage.getRaster().getDataBuffer();
 				multimedia.setContent(Base64.getEncoder().encodeToString(data.getData()));
 				transformedMultimedia.add(multimedia);
@@ -187,6 +190,26 @@ public class NotesController {
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
 		}
 	}
+	
+	private static BufferedImage toBufferedImage(Image img)
+	{
+	    if (img instanceof BufferedImage)
+	    {
+	        return (BufferedImage) img;
+	    }
+
+	    // Create a buffered image with transparency
+	    BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+	    // Draw the image on to the buffered image
+	    Graphics2D bGr = bimage.createGraphics();
+	    bGr.drawImage(img, 0, 0, null);
+	    bGr.dispose();
+
+	    // Return the buffered image
+	    return bimage;
+	}
+	
 
 	@PostMapping("/getallnotesbyid")
 	public ResponseEntity<?> getAllNotesByID(@RequestBody NoteIdentifier id, HttpServletRequest req) {
