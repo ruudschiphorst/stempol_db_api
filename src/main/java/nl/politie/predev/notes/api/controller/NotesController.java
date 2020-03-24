@@ -76,15 +76,15 @@ public class NotesController {
 			} 
 		}
 		
-		notes =  new ArrayList<Note>();
-		
+//		notes =  new ArrayList<Note>();
+//		
 //		for(Map.Entry<String, Note> entry: filteredNotes.entrySet()) {
 //			Note note  = entry.getValue();
 //			note.setMultimedia(multimediaRepository.findByNoteID(note.getNoteID()));
 //			notes.add(entry.getValue());
 //		}
 		
-		return ResponseEntity.ok(notes);
+		return ResponseEntity.ok(filteredNotes);
 	}
 	
 	@PostMapping("/addnote")
