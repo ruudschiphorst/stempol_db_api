@@ -1,6 +1,5 @@
 package nl.politie.predev.notes.api.controller;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
@@ -8,7 +7,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -28,8 +26,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -166,26 +162,23 @@ public class NotesController {
 	public ResponseEntity<?> getMostRecentNoteByID(@RequestBody NoteIdentifier id, HttpServletRequest req) {
 		try {
 			List<Multimedia> fetchedMultimedia = multimediaRepository.findByNoteID(id.getNoteID());
-//			List<Multimedia> transformedMultimedia = new ArrayList<Multimedia>();
+			List<Multimedia> transformedMultimedia = new ArrayList<Multimedia>();
 			
-//			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
-//			for(Multimedia multimedia : fetchedMultimedia) {
-//				
-//				File imgPath = new File(multimedia.getFilepath());
-//				BufferedImage bufferedImage = (BufferedImage) ImageIO.read(imgPath).getScaledInstance(10, 10, BufferedImage.SCALE_SMOOTH);
-//				DataBufferByte data   = (DataBufferByte) bufferedImage.getRaster().getDataBuffer();
-//				multimedia.setContent(Base64.getEncoder().encodeToString(data.getData()));
-//				transformedMultimedia.add(multimedia);
-//			}
-//			
-//			ObjectMapper om = new ObjectMapper();
-//			System.err.println(om.writeValueAsString(transformedMultimedia));
+			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
+			for(Multimedia multimedia : fetchedMultimedia) {
+				
+				File imgPath = new File(multimedia.getFilepath());
+				BufferedImage bufferedImage = (BufferedImage) ImageIO.read(imgPath).getScaledInstance(100, 100, BufferedImage.SCALE_SMOOTH);
+				DataBufferByte data   = (DataBufferByte) bufferedImage.getRaster().getDataBuffer();
+				multimedia.setContent(Base64.getEncoder().encodeToString(data.getData()));
+				transformedMultimedia.add(multimedia);
+			}
+			
 			
 			Note note = notesRepository.findMostRecentNoteByID(id.getNoteID());
-			note.setMultimedia(fetchedMultimedia);
+			note.setMultimedia(transformedMultimedia);
 			note.setTranscripts(noteTranscriptRepository.findByNoteID(id.getNoteID()));
 			note.setShareDetails(sharedNotesRepository.findByNoteID(id.getNoteID()));
-//			System.err.println(om.writeValueAsString(note));
 			return ResponseEntity.ok(note);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
