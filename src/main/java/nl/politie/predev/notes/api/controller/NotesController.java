@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -176,11 +177,14 @@ public class NotesController {
 				transformedMultimedia.add(multimedia);
 			}
 			
+			ObjectMapper om = new ObjectMapper();
+			System.err.println(om.writeValueAsString(transformedMultimedia));
 			
 			Note note = notesRepository.findMostRecentNoteByID(id.getNoteID());
 			note.setMultimedia(transformedMultimedia);
 			note.setTranscripts(noteTranscriptRepository.findByNoteID(id.getNoteID()));
 			note.setShareDetails(sharedNotesRepository.findByNoteID(id.getNoteID()));
+			System.err.println(om.writeValueAsString(note));
 			return ResponseEntity.ok(note);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
