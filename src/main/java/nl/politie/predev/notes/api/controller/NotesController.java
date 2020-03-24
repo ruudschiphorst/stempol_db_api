@@ -184,7 +184,7 @@ public class NotesController {
 			note.setMultimedia(fetchedMultimedia);
 			note.setTranscripts(noteTranscriptRepository.findByNoteID(id.getNoteID()));
 			note.setShareDetails(sharedNotesRepository.findByNoteID(id.getNoteID()));
-			System.err.println(om.writeValueAsString(note));
+//			System.err.println(om.writeValueAsString(note));
 			return ResponseEntity.ok(note);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
