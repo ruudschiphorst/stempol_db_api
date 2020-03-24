@@ -81,10 +81,10 @@ public class NotesController {
 		for(Map.Entry<String, Note> entry: filteredNotes.entrySet()) {
 			Note note  = entry.getValue();
 //			note.setMultimedia(multimediaRepository.findByNoteID(note.getNoteID()));
-			notes.add(entry.getValue());
+			notes.add(note);
 		}
 		
-		return ResponseEntity.ok(filteredNotes);
+		return ResponseEntity.ok(notes);
 	}
 	
 	@PostMapping("/addnote")
