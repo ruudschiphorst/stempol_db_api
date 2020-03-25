@@ -91,7 +91,21 @@ public class NotesController {
 	
 	@PostMapping("/getmultimedia")
 	public ResponseEntity<?> getMultimedia(@Valid @RequestBody MultimediaID multimediaID) {
-		return ResponseEntity.ok(multimediaRepository.getMultimediaByUUID(multimediaID.getMultimediaID()));
+		Multimedia retval = multimediaRepository.getMultimediaByUUID(multimediaID.getMultimediaID());
+		
+		if(retval.getFilepath() != null && Files.exists(Paths.get(retval.getFilepath()))) {
+			byte[] data=null;
+			try {
+				data = Files.readAllBytes(Paths.get(retval.getFilepath()));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			retval.setContent(Base64.getEncoder().encodeToString(data));
+		}
+		
+		
+		return ResponseEntity.ok(retval);
 	}
 	
 	@PostMapping("/addnote")
@@ -173,9 +187,6 @@ public class NotesController {
 			List<Multimedia> fetchedMultimedia = multimediaRepository.findByNoteID(id.getNoteID());
 			List<Multimedia> transformedMultimedia = new ArrayList<Multimedia>();
 	
-//			for(String p:  new File("/tmp/fotos").list()){
-//				System.err.println(p);
-//			}
 			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
 			for(Multimedia multimedia : fetchedMultimedia) {
 				
