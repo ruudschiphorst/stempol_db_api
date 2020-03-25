@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import nl.politie.predev.notes.api.model.Multimedia;
+import nl.politie.predev.notes.api.model.MultimediaID;
 import nl.politie.predev.notes.api.model.Note;
 import nl.politie.predev.notes.api.model.NoteIdentifier;
 import nl.politie.predev.notes.api.model.SharedNote;
@@ -86,6 +87,11 @@ public class NotesController {
 		}
 		
 		return ResponseEntity.ok(notes);
+	}
+	
+	@PostMapping("/getmultimedia")
+	public ResponseEntity<?> getMultimedia(@Valid @RequestBody MultimediaID multimediaID) {
+		return ResponseEntity.ok(multimediaRepository.getMultimediaByUUID(multimediaID.getMultimediaID()));
 	}
 	
 	@PostMapping("/addnote")
@@ -167,9 +173,9 @@ public class NotesController {
 			List<Multimedia> fetchedMultimedia = multimediaRepository.findByNoteID(id.getNoteID());
 			List<Multimedia> transformedMultimedia = new ArrayList<Multimedia>();
 	
-			for(String p:  new File("/tmp/fotos").list()){
-				System.err.println(p);
-			}
+//			for(String p:  new File("/tmp/fotos").list()){
+//				System.err.println(p);
+//			}
 			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
 			for(Multimedia multimedia : fetchedMultimedia) {
 				
@@ -180,11 +186,8 @@ public class NotesController {
 				}
 			}
 			
-			System.err.println(7);
 			Note note = notesRepository.findMostRecentNoteByID(id.getNoteID());
-			System.err.println(8);
 			note.setMultimedia(transformedMultimedia);
-			System.err.println(9);
 			note.setTranscripts(noteTranscriptRepository.findByNoteID(id.getNoteID()));
 			note.setShareDetails(sharedNotesRepository.findByNoteID(id.getNoteID()));
 			return ResponseEntity.ok(note);
@@ -192,26 +195,6 @@ public class NotesController {
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
 		}
 	}
-	
-	private static BufferedImage toBufferedImage(Image img)
-	{
-	    if (img instanceof BufferedImage)
-	    {
-	        return (BufferedImage) img;
-	    }
-
-	    // Create a buffered image with transparency
-	    BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-	    // Draw the image on to the buffered image
-	    Graphics2D bGr = bimage.createGraphics();
-	    bGr.drawImage(img, 0, 0, null);
-	    bGr.dispose();
-
-	    // Return the buffered image
-	    return bimage;
-	}
-	
 
 	@PostMapping("/getallnotesbyid")
 	public ResponseEntity<?> getAllNotesByID(@RequestBody NoteIdentifier id, HttpServletRequest req) {

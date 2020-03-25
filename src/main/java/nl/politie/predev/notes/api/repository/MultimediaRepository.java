@@ -21,5 +21,8 @@ public interface MultimediaRepository extends RefreshableRepository<Multimedia, 
 	@Modifying
 	@Query("UPDATE Multimedia SET is_deleted = true WHERE id = ?1")
 	void deleteMultimedia(Long id);
+	
+	@Query("SELECT m FROM Multimedia M WHERE multimediaID = ?1")
+	Multimedia getMultimediaByUUID(UUID uuid);
 
 }
