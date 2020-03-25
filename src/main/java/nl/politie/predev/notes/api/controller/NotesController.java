@@ -169,6 +169,12 @@ public class NotesController {
 			Path filepath = Paths.get(path);
 			Files.createFile(filepath);
             Files.write(filepath, decodedContent);
+            
+            decodedContent = Base64.getDecoder().decode(multimedia.getThumbnailContent());
+            filepath = Paths.get("thumb_" + path);
+            Files.createFile(filepath);
+            Files.write(filepath, decodedContent);
+            
             multimediaRepository.save(multimedia);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -190,8 +196,8 @@ public class NotesController {
 			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
 			for(Multimedia multimedia : fetchedMultimedia) {
 				
-				if(multimedia.getFilepath() != null && Files.exists(Paths.get(multimedia.getFilepath()))) {
-					byte[] data = Files.readAllBytes(Paths.get(multimedia.getFilepath()));
+				if(multimedia.getFilepath() != null && Files.exists(Paths.get("thumb_" +multimedia.getFilepath()))) {
+					byte[] data = Files.readAllBytes(Paths.get("thumb_" + multimedia.getFilepath()));
 					multimedia.setContent(Base64.getEncoder().encodeToString(data));
 					transformedMultimedia.add(multimedia);
 				}

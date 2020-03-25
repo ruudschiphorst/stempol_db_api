@@ -43,6 +43,9 @@ public class Multimedia implements java.io.Serializable {
 	@Transient
 	private String content;
 	
+	@Transient
+	private String thumbnailContent;
+	
 	public boolean isDeleted(){
 		return isDeleted;
 	}
@@ -101,5 +104,13 @@ public class Multimedia implements java.io.Serializable {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public String getThumbnailContent() {
+		return thumbnailContent;
+	}
+
+	public void setThumbnailContent(String thumbnailContent) {
+		this.thumbnailContent = thumbnailContent;
 	}
 }
