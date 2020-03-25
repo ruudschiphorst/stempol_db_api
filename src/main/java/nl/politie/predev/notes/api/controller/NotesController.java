@@ -200,6 +200,10 @@ public class NotesController {
 					byte[] data = Files.readAllBytes(Paths.get("thumb_" + multimedia.getFilepath()));
 					multimedia.setContent(Base64.getEncoder().encodeToString(data));
 					transformedMultimedia.add(multimedia);
+				}else if(multimedia.getFilepath() != null && Files.exists(Paths.get(multimedia.getFilepath()))) {
+					byte[] data = Files.readAllBytes(Paths.get(multimedia.getFilepath()));
+					multimedia.setContent(Base64.getEncoder().encodeToString(data));
+					transformedMultimedia.add(multimedia);
 				}
 			}
 			
