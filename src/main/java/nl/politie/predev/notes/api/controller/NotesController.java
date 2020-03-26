@@ -46,6 +46,8 @@ import nl.politie.predev.notes.api.repository.SharedNotesRepository;
 @RestController
 public class NotesController {
 
+	private static final String THUMB_FILE_PREFIX = "thumb_";
+	
 	@Autowired
 	private NotesRepository notesRepository;
 
@@ -165,15 +167,20 @@ public class NotesController {
 		}
 		
 		try {
+			
 			byte[] decodedContent = Base64.getDecoder().decode(multimedia.getContent());
 			Path filepath = Paths.get(path);
 			Files.createFile(filepath);
             Files.write(filepath, decodedContent);
             
-            decodedContent = Base64.getDecoder().decode(multimedia.getThumbnailContent());
-            filepath = Paths.get("thumb_" + path);
-            Files.createFile(filepath);
-            Files.write(filepath, decodedContent);
+            if(multimedia.getThumbnailContent() !=null) {
+	            decodedContent = Base64.getDecoder().decode(multimedia.getThumbnailContent());
+	            filepath = Paths.get(THUMB_FILE_PREFIX + path);
+	            Files.createFile(filepath);
+	            Files.write(filepath, decodedContent);
+            }else{
+            	createThumbnail(path);
+            }
             
             multimediaRepository.save(multimedia);
 		} catch (IOException e) {
@@ -195,16 +202,14 @@ public class NotesController {
 	
 			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
 			for(Multimedia multimedia : fetchedMultimedia) {
-				
-				if(multimedia.getFilepath() != null && Files.exists(Paths.get("thumb_" +multimedia.getFilepath()))) {
-					byte[] data = Files.readAllBytes(Paths.get("thumb_" + multimedia.getFilepath()));
-					multimedia.setThumbnailContent(Base64.getEncoder().encodeToString(data));
-					transformedMultimedia.add(multimedia);
+				byte[] data=null;
+				if(multimedia.getFilepath() != null && Files.exists(Paths.get(THUMB_FILE_PREFIX +multimedia.getFilepath()))) {
+					data = Files.readAllBytes(Paths.get(THUMB_FILE_PREFIX + multimedia.getFilepath()));
 				}else if(multimedia.getFilepath() != null && Files.exists(Paths.get(multimedia.getFilepath()))) {
-					byte[] data = Files.readAllBytes(Paths.get(multimedia.getFilepath()));
-					multimedia.setThumbnailContent(Base64.getEncoder().encodeToString(data));
-					transformedMultimedia.add(multimedia);
+					data = Files.readAllBytes(Paths.get(multimedia.getFilepath()));
 				}
+				multimedia.setThumbnailContent(Base64.getEncoder().encodeToString(data));
+				transformedMultimedia.add(multimedia);
 			}
 			
 			Note note = notesRepository.findMostRecentNoteByID(id.getNoteID());
@@ -246,6 +251,19 @@ public class NotesController {
 		}
 		
 		return retval;
+	}
+	
+	private void createThumbnail(String pathOfOriginal) {
+		
+		try {
+			BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+			img.createGraphics().drawImage(ImageIO.read(new File(pathOfOriginal)).getScaledInstance(100, 100, Image.SCALE_SMOOTH),0,0,null);
+			ImageIO.write(img, "jpg", new File(THUMB_FILE_PREFIX + pathOfOriginal));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	private Note getFilteredNote(Note note, HttpServletRequest req) {
