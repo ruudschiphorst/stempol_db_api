@@ -172,12 +172,13 @@ public class NotesController {
 			Path filepath = Paths.get(path);
 			Files.createFile(filepath);
             Files.write(filepath, decodedContent);
-            
+            System.err.println("created regular file");
             if(multimedia.getThumbnailContent() !=null) {
 	            decodedContent = Base64.getDecoder().decode(multimedia.getThumbnailContent());
 	            filepath = Paths.get(THUMB_FILE_PREFIX + path);
 	            Files.createFile(filepath);
 	            Files.write(filepath, decodedContent);
+	            System.err.println("created thumbnail from thumbnal content");
             }else{
             	createThumbnail(path);
             }
@@ -257,11 +258,12 @@ public class NotesController {
 	}
 	
 	private void createThumbnail(String pathOfOriginal) {
-		
+		System.err.println("creating thumb...");
 		try {
 			BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
 			img.createGraphics().drawImage(ImageIO.read(new File(pathOfOriginal)).getScaledInstance(100, 100, Image.SCALE_SMOOTH),0,0,null);
 			ImageIO.write(img, "jpg", new File(THUMB_FILE_PREFIX + pathOfOriginal));
+			System.err.println("created thumb");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
