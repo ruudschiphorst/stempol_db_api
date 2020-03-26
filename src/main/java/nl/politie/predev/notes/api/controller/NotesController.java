@@ -117,7 +117,7 @@ public class NotesController {
 
 	@PostMapping("/updatenote")
 	public ResponseEntity<?> updateNote(@Valid @RequestBody Note note, HttpServletRequest req) {
-		System.err.println("updating note... " + note.getNoteID().toString());
+//		System.err.println("updating note... " + note.getNoteID().toString());
 		Integer versionNumber;
 		try {
 			//Note ophalen met grootste versienummer, nummer ophogen en dit wordt het nieuwe nummer
