@@ -154,8 +154,10 @@ public class NotesController {
 
 	private void handleMultimediaUpload(Multimedia multimedia, Note note) {
 		
-		String path = "/tmp/fotos/" + UUID.randomUUID().toString() + ".jpg";
+		String fileUUID = UUID.randomUUID().toString();
 		
+		String path = "/tmp/fotos/" + fileUUID + ".jpg";
+		String thumbPath =  "/tmp/fotos/" + THUMB_FILE_PREFIX + fileUUID + ".jpg";
 		multimedia.setNoteID(note.getNoteID());
 		multimedia.setDeleted(false);
 		multimedia.setFiletype("jpg");
@@ -175,12 +177,12 @@ public class NotesController {
             System.err.println("created regular file");
             if(multimedia.getThumbnailContent() !=null) {
 	            decodedContent = Base64.getDecoder().decode(multimedia.getThumbnailContent());
-	            filepath = Paths.get(THUMB_FILE_PREFIX + path);
+	            filepath = Paths.get(thumbPath);
 	            Files.createFile(filepath);
 	            Files.write(filepath, decodedContent);
 	            System.err.println("created thumbnail from thumbnal content");
             }else{
-            	createThumbnail(path);
+            	createThumbnail(path, thumbPath);
             }
             
             multimediaRepository.save(multimedia);
@@ -257,12 +259,12 @@ public class NotesController {
 		return retval;
 	}
 	
-	private void createThumbnail(String pathOfOriginal) {
+	private void createThumbnail(String pathOfOriginal, String thumbPath) {
 		System.err.println("creating thumb...");
 		try {
 			BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
 			img.createGraphics().drawImage(ImageIO.read(new File(pathOfOriginal)).getScaledInstance(100, 100, Image.SCALE_SMOOTH),0,0,null);
-			ImageIO.write(img, "jpg", new File(THUMB_FILE_PREFIX + pathOfOriginal));
+			ImageIO.write(img, "jpg", new File(thumbPath));
 			System.err.println("created thumb");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
