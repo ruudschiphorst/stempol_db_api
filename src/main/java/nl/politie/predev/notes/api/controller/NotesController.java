@@ -142,6 +142,7 @@ public class NotesController {
 			notesRepository.refresh(n);
 			
 			if(n.getMultimedia() != null) {
+				System.err.println("adding multimedia no#: " + n.getMultimedia().size() );
 				for(Multimedia multimedia : n.getMultimedia()) {
 					handleMultimediaUpload(multimedia, n);
 				}
@@ -155,6 +156,7 @@ public class NotesController {
 
 	private void handleMultimediaUpload(Multimedia multimedia, Note note) {
 		
+		System.err.println("handling upload");
 		String fileUUID = UUID.randomUUID().toString();
 		
 		String path = "/tmp/fotos/" + fileUUID + ".jpg";
