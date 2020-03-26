@@ -141,9 +141,8 @@ public class NotesController {
 			Note n = notesRepository.save(note);
 			notesRepository.refresh(n);
 			
-			if(n.getMultimedia() != null) {
-				System.err.println("adding multimedia no#: " + n.getMultimedia().size() );
-				for(Multimedia multimedia : n.getMultimedia()) {
+			if(note.getMultimedia() != null) {
+				for(Multimedia multimedia : note.getMultimedia()) {
 					handleMultimediaUpload(multimedia, n);
 				}
 			}
@@ -155,7 +154,10 @@ public class NotesController {
 	}
 
 	private void handleMultimediaUpload(Multimedia multimedia, Note note) {
-		
+		if(multimedia.getFilepath() !=null) {
+			//bestaat al
+			return;
+		}
 		System.err.println("handling upload");
 		String fileUUID = UUID.randomUUID().toString();
 		
@@ -176,17 +178,6 @@ public class NotesController {
 			Path filepath = Paths.get(path);
 			Files.createFile(filepath);
             Files.write(filepath, decodedContent);
-//            System.err.println("created regular file");
-//            if(multimedia.getThumbnailContent() !=null) {
-//	            decodedContent = Base64.getDecoder().decode(multimedia.getThumbnailContent());
-//	            filepath = Paths.get(thumbPath);
-//	            Files.createFile(filepath);
-//	            Files.write(filepath, decodedContent);
-//	            System.err.println("created thumbnail from thumbnal content");
-//            }else{
-//            	createThumbnail(path, thumbPath);
-//            }
-            
             multimediaRepository.save(multimedia);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
