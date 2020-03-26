@@ -202,10 +202,13 @@ public class NotesController {
 	
 			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
 			for(Multimedia multimedia : fetchedMultimedia) {
+				System.err.println("fetching multimedia");
 				byte[] data=null;
 				if(multimedia.getFilepath() != null && Files.exists(Paths.get(THUMB_FILE_PREFIX +multimedia.getFilepath()))) {
+					System.err.println("thumb");
 					data = Files.readAllBytes(Paths.get(THUMB_FILE_PREFIX + multimedia.getFilepath()));
 				}else if(multimedia.getFilepath() != null && Files.exists(Paths.get(multimedia.getFilepath()))) {
+					System.err.println("normal");
 					data = Files.readAllBytes(Paths.get(multimedia.getFilepath()));
 				}
 				multimedia.setThumbnailContent(Base64.getEncoder().encodeToString(data));
