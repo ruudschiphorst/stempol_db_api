@@ -154,6 +154,7 @@ public class NotesController {
 	}
 
 	private void handleMultimediaUpload(Multimedia multimedia, Note note) {
+		
 		if(multimedia.getFilepath() !=null) {
 			//bestaat al
 			return;
@@ -199,13 +200,18 @@ public class NotesController {
 			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
 			for(Multimedia multimedia : fetchedMultimedia) {
 				System.err.println("fetching multimedia");
-				byte[] data=null;
-				if(multimedia.getFilepath() != null && Files.exists(Paths.get(THUMB_FILE_PREFIX +multimedia.getFilepath()))) {
-					data = Files.readAllBytes(Paths.get(THUMB_FILE_PREFIX + multimedia.getFilepath()));
-				}else if(multimedia.getFilepath() != null && Files.exists(Paths.get(multimedia.getFilepath()))) {
-					data = Files.readAllBytes(Paths.get(multimedia.getFilepath()));
+//				byte[] data=null;
+				String thumbnailAsBase64String ="";
+
+									
+				if(multimedia.getFilepath() != null && Files.exists(Paths.get(multimedia.getFilepath()))) {
+					try{
+						thumbnailAsBase64String = createThumbnailAsBase64String(multimedia.getFilepath());
+					}catch(IOException ioException) {
+						thumbnailAsBase64String = Base64.getEncoder().encodeToString(Files.readAllBytes(Paths.get(multimedia.getFilepath())));
+					}
 				}
-				multimedia.setThumbnailContent(Base64.getEncoder().encodeToString(data));
+				multimedia.setThumbnailContent(thumbnailAsBase64String);
 				transformedMultimedia.add(multimedia);
 			}
 			
@@ -248,6 +254,21 @@ public class NotesController {
 		}
 		
 		return retval;
+	}
+
+	private String createThumbnailAsBase64String(String pathToOriginal) throws IOException {
+		
+		BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+		img.createGraphics().drawImage(ImageIO.read(new File(pathToOriginal)).getScaledInstance(100, 100, Image.SCALE_SMOOTH),0,0,null);
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write( img, "jpg", baos );
+		baos.flush();
+		byte[] imageInByte = baos.toByteArray();
+		baos.close();
+		
+		return Base64.getEncoder().encodeToString(imageInByte);
+		
 	}
 	
 //	private void createThumbnail(String pathOfOriginal, String thumbPath) {
