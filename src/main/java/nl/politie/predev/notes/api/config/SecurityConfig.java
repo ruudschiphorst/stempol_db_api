@@ -28,7 +28,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 				.addFilter(new JwtTokenProvider(authenticationManager()))
 				.authorizeRequests()
-				.anyRequest().authenticated();		//.anonymous();
+				.antMatchers("/privacy")
+					.permitAll()
+				.anyRequest()
+					.authenticated();		//.anonymous();
 	}
 
 	@Autowired
