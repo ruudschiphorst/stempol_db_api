@@ -1,9 +1,7 @@
 package nl.politie.predev.notes.api.controller;
 
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +44,6 @@ import nl.politie.predev.notes.api.repository.SharedNotesRepository;
 @RestController
 public class NotesController {
 
-	private static final String THUMB_FILE_PREFIX = "thumb_";
 	
 	@Autowired
 	private NotesRepository notesRepository;
@@ -62,11 +59,28 @@ public class NotesController {
 
 	private String jwtSecret="JWTSuperSecretKey";
 	
-	@GetMapping("/get")
-	public ResponseEntity<?> getEverythingTest(){
-		return ResponseEntity.ok(notesRepository.findAll());
+	@GetMapping("/privacy")
+	public ResponseEntity<?> getPrivacy(){
+			
+		String retval ="<h2>Privacy Policy</h2>\n" + 
+				"<p>Your privacy is important to us. It is Predev's policy to respect your privacy regarding any information we may collect from you through our app, Het Digitale Zakboekje.</p>\n" + 
+				"<p>We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent. We also let you know why we’re collecting it and how it will be used.</p>\n" + 
+				"<p>We only retain collected information for as long as necessary to provide you with your requested service. What data we store, we’ll protect within commercially acceptable means to prevent loss and theft, as well as unauthorized access, disclosure, copying, use or modification.</p>\n" + 
+				"<p>We don’t share any personally identifying information publicly or with third-parties, except when required to by law.</p>\n" + 
+				"<p>Our app may link to external sites that are not operated by us. Please be aware that we have no control over the content and practices of these sites, and cannot accept responsibility or liability for their respective privacy policies.</p>\n" + 
+				"<p>You are free to refuse our request for your personal information, with the understanding that we may be unable to provide you with some of your desired services.</p>\n" + 
+				"<p>Your continued use of our app will be regarded as acceptance of our practices around privacy and personal information. If you have any questions about how we handle user data and personal information, feel free to contact us.</p>\n" + 
+				"<p>This policy is effective as of 14 April 2020.</p>\n" + 
+				"<p><a href=\"https://getterms.io\" title=\"Generate a free privacy policy\">Privacy Policy created with GetTerms.</a></p>";
+		
+		return ResponseEntity.ok(retval);
 	}
 	
+//	@GetMapping("/get")
+//	public ResponseEntity<?> getEverythingTest(){
+//		return ResponseEntity.ok(notesRepository.findAll());
+//	}
+//	
 	@GetMapping("/getall")
 	public ResponseEntity<?> getAll(){
 		List<Note> notes = notesRepository.getAll("Ruud", "mwdp");
@@ -84,7 +98,6 @@ public class NotesController {
 		
 		for(Map.Entry<String, Note> entry: filteredNotes.entrySet()) {
 			Note note  = entry.getValue();
-//			note.setMultimedia(multimediaRepository.findByNoteID(note.getNoteID()));
 			notes.add(note);
 		}
 		
@@ -117,7 +130,6 @@ public class NotesController {
 
 	@PostMapping("/updatenote")
 	public ResponseEntity<?> updateNote(@Valid @RequestBody Note note, HttpServletRequest req) {
-//		System.err.println("updating note... " + note.getNoteID().toString());
 		Integer versionNumber;
 		try {
 			//Note ophalen met grootste versienummer, nummer ophogen en dit wordt het nieuwe nummer
@@ -159,7 +171,6 @@ public class NotesController {
 			//bestaat al
 			return;
 		}
-		System.err.println("handling upload");
 		String fileUUID = UUID.randomUUID().toString();
 		
 		String path = "/tmp/fotos/" + fileUUID + ".jpg";
@@ -199,15 +210,14 @@ public class NotesController {
 	
 			//Omzetten naar base64 string, zodat ik het in JSON kan knallen
 			for(Multimedia multimedia : fetchedMultimedia) {
-				System.err.println("fetching multimedia");
-//				byte[] data=null;
 				String thumbnailAsBase64String ="";
 
-									
 				if(multimedia.getFilepath() != null && Files.exists(Paths.get(multimedia.getFilepath()))) {
 					try{
+						//Voorkeur om on the fly een thumbnail te maken
 						thumbnailAsBase64String = createThumbnailAsBase64String(multimedia.getFilepath());
 					}catch(IOException ioException) {
+						//Maar als thumb maken niet lukt, dan maar het origineel teruggeven
 						thumbnailAsBase64String = Base64.getEncoder().encodeToString(Files.readAllBytes(Paths.get(multimedia.getFilepath())));
 					}
 				}
@@ -258,6 +268,7 @@ public class NotesController {
 
 	private String createThumbnailAsBase64String(String pathToOriginal) throws IOException {
 		
+		//100 x 100 pixels
 		BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
 		img.createGraphics().drawImage(ImageIO.read(new File(pathToOriginal)).getScaledInstance(100, 100, Image.SCALE_SMOOTH),0,0,null);
 		
@@ -271,20 +282,6 @@ public class NotesController {
 		
 	}
 	
-//	private void createThumbnail(String pathOfOriginal, String thumbPath) {
-//		System.err.println("creating thumb...");
-//		try {
-//			BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-//			img.createGraphics().drawImage(ImageIO.read(new File(pathOfOriginal)).getScaledInstance(100, 100, Image.SCALE_SMOOTH),0,0,null);
-//			ImageIO.write(img, "jpg", new File(thumbPath));
-//			System.err.println("created thumb");
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//	}
-
 	private Note getFilteredNote(Note note, HttpServletRequest req) {
 		
 		//TODO
