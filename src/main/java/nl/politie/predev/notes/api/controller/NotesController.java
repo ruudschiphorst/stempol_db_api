@@ -111,7 +111,7 @@ public class NotesController {
 	public ResponseEntity<?> getMyPublicNotes(HttpServletRequest req){
 		String username = getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
 		String groups = getGroupsFromJWTAsString(req.getHeader("Authorization").replace("Bearer ", ""));
-		List<Note> notes = notesRepository.getMyPublicNotes(username, groups);
+		List<Note> notes = notesRepository.getMyPublicNotes(username);
 		Map<String, Note> filteredNotes = new HashMap<String, Note>();
 		
 		//Alleen meest recente versies
