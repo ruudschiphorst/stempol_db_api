@@ -133,8 +133,8 @@ public class NotesController {
 	
 	@GetMapping("/getpublicnotes")
 	public ResponseEntity<?> getPublicNotes(HttpServletRequest req){
-		
-		List<Note> notes = notesRepository.getPublicNotes();
+		String username = getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
+		List<Note> notes = notesRepository.getPublicNotes(username);
 		Map<String, Note> filteredNotes = new HashMap<String, Note>();
 		
 		//Alleen meest recente versies

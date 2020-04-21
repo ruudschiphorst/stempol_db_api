@@ -46,6 +46,6 @@ public interface NotesRepository extends RefreshableRepository<Note, Long> {
 	
 //	@Query("SELECT n FROM Note n WHERE n.is_public = true AND n.is_deleted = false ORDER BY n.generated_at DESC")
 	@Query("SELECT n FROM Note n WHERE LOWER(n.owner) <> LOWER(?1) AND LOWER(n.created_by) <> LOWER(?1) AND n.is_deleted = false AND n.is_public = true ORDER BY n.generated_at DESC")
-	List<Note> getPublicNotes();
+	List<Note> getPublicNotes(String username);
 	
 }
