@@ -106,6 +106,31 @@ public class NotesController {
 		return ResponseEntity.ok(notes);
 	}
 	
+	
+	@GetMapping("/getmypublicnotes")
+	public ResponseEntity<?> getMyPublicNotes(HttpServletRequest req){
+		String username = getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
+		String groups = getGroupsFromJWTAsString(req.getHeader("Authorization").replace("Bearer ", ""));
+		List<Note> notes = notesRepository.getMyPublicNotes(username, groups);
+		Map<String, Note> filteredNotes = new HashMap<String, Note>();
+		
+		//Alleen meest recente versies
+		for(Note note: notes) {
+			Note existing = filteredNotes.get(note.getNoteID().toString());
+			if(existing == null || note.getVersion() > existing.getVersion()) {
+				filteredNotes.put(note.getNoteID().toString(), note);
+			} 
+		}
+		
+		notes =  new ArrayList<Note>();
+		
+		for(Map.Entry<String, Note> entry: filteredNotes.entrySet()) {
+			Note note  = entry.getValue();
+			notes.add(note);
+		}
+		
+		return ResponseEntity.ok(notes);
+	}
 	@GetMapping("/getmynotes")
 	public ResponseEntity<?> getMyNotes(HttpServletRequest req){
 		String username = getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
