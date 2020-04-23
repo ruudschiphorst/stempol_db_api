@@ -23,8 +23,11 @@ public interface NotesRepository extends RefreshableRepository<Note, Long> {
 	@Query("SELECT n FROM Note n WHERE noteID = ?1 AND version=(SELECT max(version) FROM Note n1 WHERE noteID = ?1)")
 	Note findMostRecentNoteByIdIncludingDeleted(UUID noteID);
 	
-	@Query("SELECT n FROM Note n WHERE noteID = ?1 AND is_deleted = false")
+	@Query("SELECT n FROM Note n WHERE n.noteID = ?1 AND n.is_deleted = false ORDER BY n.generated_at DESC")
 	List<Note> findAllNoteVersionsByID(UUID noteID);
+	
+	@Query("SELECT n FROM Note n WHERE n.noteID = ?1 AND n.is_deleted = false AND n.version <> ?2 ORDER BY n.generated_at DESC")
+	List<Note> findAllOtherNoteVersionsByID(UUID noteID, Integer version);
 	
 	@Transactional
 	@Modifying

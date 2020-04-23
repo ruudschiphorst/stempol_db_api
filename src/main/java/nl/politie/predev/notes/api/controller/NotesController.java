@@ -181,7 +181,7 @@ public class NotesController {
 	
 	@PostMapping("/getallversionsofnote")
 	public ResponseEntity<?> getAllVersionsOfNote(@Valid @RequestBody NoteIdentifier id, HttpServletRequest req) {
-		List<Note> retval = notesRepository.findAllNoteVersionsByID(id.getNoteID());
+		List<Note> retval = notesRepository.findAllOtherNoteVersionsByID(id.getNoteID(), id.getVersion());
 		return ResponseEntity.ok(retval);
 	}
 	
