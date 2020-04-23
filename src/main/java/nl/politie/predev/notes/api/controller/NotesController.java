@@ -110,7 +110,6 @@ public class NotesController {
 	@GetMapping("/getmypublicnotes")
 	public ResponseEntity<?> getMyPublicNotes(HttpServletRequest req){
 		String username = getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
-		String groups = getGroupsFromJWTAsString(req.getHeader("Authorization").replace("Bearer ", ""));
 		List<Note> notes = notesRepository.getMyPublicNotes(username);
 		Map<String, Note> filteredNotes = new HashMap<String, Note>();
 		
@@ -178,6 +177,12 @@ public class NotesController {
 		}
 		
 		return ResponseEntity.ok(notes);
+	}
+	
+	@PostMapping("/getallversionsofnote")
+	public ResponseEntity<?> getAllVersionsOfNote(@Valid @RequestBody NoteIdentifier id, HttpServletRequest req) {
+		List<Note> retval = notesRepository.findAllNoteVersionsByID(id.getNoteID());
+		return ResponseEntity.ok(retval);
 	}
 	
 	@PostMapping("/getmultimedia")
