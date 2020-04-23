@@ -181,7 +181,15 @@ public class NotesController {
 	
 	@PostMapping("/getallversionsofnote")
 	public ResponseEntity<?> getAllVersionsOfNote(@Valid @RequestBody NoteIdentifier id, HttpServletRequest req) {
-		List<Note> retval = notesRepository.findAllOtherNoteVersionsByID(id.getNoteID(), id.getVersion());
+		List<Note> fetched = notesRepository.findAllOtherNoteVersionsByID(id.getNoteID(), id.getVersion());
+		List<Note> retval = new ArrayList<Note>();
+		String username = getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
+		for(Note n: fetched){
+			if(n.getOwner().equalsIgnoreCase(username) || n.getCreated_by().equalsIgnoreCase(username) || n.isIs_public()) {
+				retval.add(n);
+			}
+		}
+		
 		return ResponseEntity.ok(retval);
 	}
 	
