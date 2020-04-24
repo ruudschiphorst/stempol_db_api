@@ -125,7 +125,9 @@ public class NotesController {
 		
 		for(Map.Entry<String, Note> entry: filteredNotes.entrySet()) {
 			Note note  = entry.getValue();
-			notes.add(note);
+			if(note.isIs_public()){
+				notes.add(note);
+			}
 		}
 		
 		return ResponseEntity.ok(notes);
