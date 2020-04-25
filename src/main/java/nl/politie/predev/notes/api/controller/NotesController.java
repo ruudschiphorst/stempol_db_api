@@ -177,7 +177,7 @@ public class NotesController {
 		
 		for(Map.Entry<String, Note> entry: filteredNotes.entrySet()) {
 			Note note  = entry.getValue();
-			if(note.isIs_public() && !note.getCreated_by().equalsIgnoreCase(username) && ! note.getOwner().equalsIgnoreCase(username)){
+			if(note.isIs_public() && (!note.getCreated_by().equalsIgnoreCase(username) || ! note.getOwner().equalsIgnoreCase(username))){
 				notes.add(note);
 			}
 		}
