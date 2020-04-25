@@ -110,7 +110,8 @@ public class NotesController {
 	@GetMapping("/getmypublicnotes")
 	public ResponseEntity<?> getMyPublicNotes(HttpServletRequest req){
 		String username = getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
-		List<Note> notes = notesRepository.getMyPublicNotes(username);
+		String groups = getGroupsFromJWTAsString(req.getHeader("Authorization").replace("Bearer ", ""));
+		List<Note> notes = notesRepository.getMyNotes(username, groups);
 		Map<String, Note> filteredNotes = new HashMap<String, Note>();
 		
 		//Alleen meest recente versies
@@ -160,7 +161,8 @@ public class NotesController {
 	@GetMapping("/getpublicnotes")
 	public ResponseEntity<?> getPublicNotes(HttpServletRequest req){
 		String username = getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
-		List<Note> notes = notesRepository.getPublicNotes(username);
+		String groups = getGroupsFromJWTAsString(req.getHeader("Authorization").replace("Bearer ", ""));
+		List<Note> notes = notesRepository.getAll(username, groups);
 		Map<String, Note> filteredNotes = new HashMap<String, Note>();
 		
 		//Alleen meest recente versies
@@ -175,7 +177,7 @@ public class NotesController {
 		
 		for(Map.Entry<String, Note> entry: filteredNotes.entrySet()) {
 			Note note  = entry.getValue();
-			if(note.isIs_public()){
+			if(note.isIs_public() && !note.getCreated_by().equalsIgnoreCase(username) && ! note.getOwner().equalsIgnoreCase(username)){
 				notes.add(note);
 			}
 		}
