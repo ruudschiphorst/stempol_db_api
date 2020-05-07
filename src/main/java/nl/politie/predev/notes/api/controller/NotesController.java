@@ -57,7 +57,7 @@ public class NotesController {
 	@Autowired
 	private SharedNotesRepository sharedNotesRepository;
 
-	private String jwtSecret="JWTSuperSecretKey";
+	private String jwtSecret=System.getenv("JWT_SIGNING_KEY");
 	
 	@GetMapping("/privacy")
 	public ResponseEntity<?> getPrivacy(){
