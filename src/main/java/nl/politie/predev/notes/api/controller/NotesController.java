@@ -133,6 +133,7 @@ public class NotesController {
 		
 		return ResponseEntity.ok(notes);
 	}
+	
 	@GetMapping("/getmynotes")
 	public ResponseEntity<?> getMyNotes(HttpServletRequest req){
 		String username = getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
@@ -177,7 +178,8 @@ public class NotesController {
 		
 		for(Map.Entry<String, Note> entry: filteredNotes.entrySet()) {
 			Note note  = entry.getValue();
-			if(note.isIs_public() && (!note.getCreated_by().equalsIgnoreCase(username) || ! note.getOwner().equalsIgnoreCase(username))){
+			if(note.isIs_public() && 
+					(!note.getCreated_by().equalsIgnoreCase(username) || !note.getOwner().equalsIgnoreCase(username))){
 				notes.add(note);
 			}
 		}
@@ -347,19 +349,19 @@ public class NotesController {
 		return ResponseEntity.ok("{\"acknowledged\": true}");
 	}
 	
-	private List<Note> getFilteredNotes(List<Note> notes, HttpServletRequest req) {
-		
-		List<Note> retval = new ArrayList<Note>();
-
-		for(Note note : notes) {
-			Note filteredNote = getFilteredNote(note, req);
-			if(filteredNote !=null) {
-				retval.add(filteredNote);
-			}
-		}
-		
-		return retval;
-	}
+//	private List<Note> getFilteredNotes(List<Note> notes, HttpServletRequest req) {
+//		
+//		List<Note> retval = new ArrayList<Note>();
+//
+//		for(Note note : notes) {
+//			Note filteredNote = getFilteredNote(note, req);
+//			if(filteredNote !=null) {
+//				retval.add(filteredNote);
+//			}
+//		}
+//		
+//		return retval;
+//	}
 
 	private String createThumbnailAsBase64String(String pathToOriginal) throws IOException {
 		
@@ -377,30 +379,30 @@ public class NotesController {
 		
 	}
 	
-	private Note getFilteredNote(Note note, HttpServletRequest req) {
-		
-		//TODO
-		//TODO
-		//TODO 
-		//RBAC filters
-		
-		//User en dr groups waar hij in zit ophalen
-		String username = getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
-		List<String> groups =  getGroupsFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
-		
-		//Als ik de owner ben mag ik hem zien
-		if(note.getOwner().equalsIgnoreCase(username)) {
-			return note;
-		}else{
-			for(SharedNote sharedNote: note.getShareDetails()){
-				//Als de note met mij of met de groep waar ik in zit gedeeld wordt, dan mag ik hem zien
-				if(sharedNote.getSharedWithUsername().equalsIgnoreCase(username)|| groups.contains(sharedNote.getSharedWithGroupname())) {
-					return note;
-				}
-			}
-		}
-		return null;
-	}
+//	private Note getFilteredNote(Note note, HttpServletRequest req) {
+//		
+//		//TODO
+//		//TODO
+//		//TODO 
+//		//RBAC filters
+//		
+//		//User en dr groups waar hij in zit ophalen
+//		String username = getUsernameFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
+//		List<String> groups =  getGroupsFromJWT(req.getHeader("Authorization").replace("Bearer ", ""));
+//		
+//		//Als ik de owner ben mag ik hem zien
+//		if(note.getOwner().equalsIgnoreCase(username)) {
+//			return note;
+//		}else{
+//			for(SharedNote sharedNote: note.getShareDetails()){
+//				//Als de note met mij of met de groep waar ik in zit gedeeld wordt, dan mag ik hem zien
+//				if(sharedNote.getSharedWithUsername().equalsIgnoreCase(username)|| groups.contains(sharedNote.getSharedWithGroupname())) {
+//					return note;
+//				}
+//			}
+//		}
+//		return null;
+//	}
 	
 	
 	public String getUsernameFromJWT(String token) {

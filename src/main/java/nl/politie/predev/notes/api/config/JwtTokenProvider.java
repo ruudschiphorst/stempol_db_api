@@ -31,7 +31,7 @@ public class JwtTokenProvider extends BasicAuthenticationFilter  {
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenProvider.class);
-    private String jwtSecret="JWTSuperSecretKey";
+    private String jwtSecret=System.getenv("JWT_SIGNING_KEY");
  
     public String getUsernameFromJWT(String token) {
 
