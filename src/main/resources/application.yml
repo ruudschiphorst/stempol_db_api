@@ -5,7 +5,7 @@ server:
   ssl.key-store-password: ${KEYSTORE_PASS}
   ssl.key-alias: 'tomcat'
   ssl.keyStoreType: PKCS12
-security.require-ssl: true
+security.require-ssl: false
 spring.datasource.url: 'jdbc:postgresql://postgres:5432/stempol_notes'
 spring.datasource.username: 'postgres'
 spring.datasource.password: ${POSTGRES_PASSWORD}
