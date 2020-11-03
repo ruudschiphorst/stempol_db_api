@@ -362,7 +362,7 @@ public class NotesController {
 		
 		EntityManager em = notesRepository.getEM();
 		
-		String jql = "SELECT n from notes n where owner = '" + owner + "'";        
+		String jql = "SELECT n from Note n where owner = '" + owner + "'";        
 	    TypedQuery<Note> q = em.createQuery(jql, Note.class);        
 	    return ResponseEntity.ok(q.getResultList());
 		
