@@ -358,7 +358,7 @@ public class NotesController {
 		return ResponseEntity.ok(notesRepository.getMySqlInjectionNotesByOwner(owner));
 	}
 	@PostMapping("/getmysuperunsafenotes")
-	public ResponseEntity<?> getMySuperUnsafeNotes(@RequestParam String owner, HttpServletRequest req) {
+	public ResponseEntity<?> getMySuperUnsafeNotes(@RequestParam(name="owner", required=false) String owner, HttpServletRequest req) {
 		
 		EntityManager em = notesRepository.getEM();
 		
