@@ -364,7 +364,7 @@ public class NotesController {
 		
 		String jql = "SELECT * from notes where owner = '" + owner + "'";        
 	    TypedQuery<Note> q = em.createQuery(jql, Note.class);        
-	    return ResponseEntity.ok(q.getResultList().stream().map);
+	    return ResponseEntity.ok(q.getResultList());
 		
 	}
 
