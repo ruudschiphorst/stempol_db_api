@@ -21,4 +21,9 @@ public class RefreshableRepositoryImpl<T, ID extends Serializable> extends Simpl
     public void refresh(T t) {
         entityManager.refresh(t);
     }
+    
+    @Override
+    public EntityManager getEM() {
+    	return this.entityManager;
+    }
 }

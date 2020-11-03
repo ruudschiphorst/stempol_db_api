@@ -15,8 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -26,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.jsonwebtoken.Claims;
@@ -348,6 +352,22 @@ public class NotesController {
 		notesRepository.deleteById(id.getNoteID());
 		return ResponseEntity.ok("{\"acknowledged\": true}");
 	}
+	
+	@PostMapping("/getmysqlinjectionnotesbyowner")
+	public ResponseEntity<?> getMySqlInjectionNotesByOwner(@RequestParam String owner, HttpServletRequest req) {
+		return ResponseEntity.ok(notesRepository.getMySqlInjectionNotesByOwner(owner));
+	}
+	@PostMapping("/getmysuperunsafenotes")
+	public ResponseEntity<?> getMySuperUnsafeNotes(@RequestParam String owner, HttpServletRequest req) {
+		
+		EntityManager em = notesRepository.getEM();
+		
+		String jql = "from Notes where owner = '" + owner + "'";        
+	    TypedQuery<Note> q = em.createQuery(jql, Note.class);        
+	    return ResponseEntity.ok(q.getResultList());
+		
+	}
+
 	
 //	private List<Note> getFilteredNotes(List<Note> notes, HttpServletRequest req) {
 //		
